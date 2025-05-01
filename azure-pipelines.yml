@@ -1,14 +1,8 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - main
 
 pool:
   vmImage: ubuntu-latest
-
 
 variables:
   - group: test   # Replace with your actual variable group name
@@ -22,6 +16,11 @@ stages:
       vmImage: 'ubuntu-latest'
 
     steps:
+    # Debug step: print the file contents before replacing tokens
+    - script: cat $(System.DefaultWorkingDirectory)/application-prod_scheduler.properties
+      displayName: 'Print file contents before token replacement'
+
+    # Replace tokens
     - task: qetza.replacetokens.replacetokens-task.replacetokens@6
       displayName: 'Replace tokens in application-prod_scheduler.properties'
       inputs:
@@ -31,6 +30,11 @@ stages:
         actionOnMissing: 'warn'
         keepToken: false
 
+    # Debug step: print the file contents after replacing tokens
+    - script: cat $(System.DefaultWorkingDirectory)/application-prod_scheduler.properties
+      displayName: 'Print file contents after token replacement'
+
+    # Publish the modified file as an artifact
     - task: PublishBuildArtifacts@1
       displayName: 'Publish properties file as artifact'
       inputs:
