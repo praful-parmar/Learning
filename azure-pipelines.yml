@@ -16,6 +16,11 @@ stages:
       vmImage: 'ubuntu-latest'
 
     steps:
+
+    - script: |
+        echo "abc: $(abc)"
+        echo "bcd: $(bcd)"
+      displayName: 'Print variable values'
     # Debug step: print the file contents before replacing tokens
     - script: cat $(System.DefaultWorkingDirectory)/application-prod_scheduler.properties
       displayName: 'Print file contents before token replacement'
