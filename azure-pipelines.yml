@@ -1,0 +1,39 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+
+variables:
+  - group: MyVariableGroup   # Replace with your actual variable group name
+
+stages:
+- stage: ReplaceAndPublish
+  jobs:
+  - job: ReplaceAndExport
+    displayName: 'Replace tokens and publish .properties file'
+    pool:
+      vmImage: 'ubuntu-latest'
+
+    steps:
+    - task: qetza.replacetokens.replacetokens-task.replacetokens@6
+      displayName: 'Replace tokens in application-prod_scheduler.properties'
+      inputs:
+        targetFiles: '$(System.DefaultWorkingDirectory)/$(mainRepoName)/src/main/resources/application-prod_scheduler.properties'
+        tokenPrefix: '${'
+        tokenSuffix: '}'
+        actionOnMissing: 'warn'
+        keepToken: false
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish properties file as artifact'
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/$(mainRepoName)/src/main/resources'
+        ArtifactName: 'scheduler-config'
+        publishLocation: 'Container'
