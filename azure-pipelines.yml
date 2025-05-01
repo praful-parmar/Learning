@@ -18,8 +18,8 @@ stages:
     steps:
 
     - script: |
-        echo "abc: $(abc)"
-        echo "bcd: $(bcd)"
+        echo "abc: $(key1)"
+        echo "bcd: $(key2)"
       displayName: 'Print variable values'
     # Debug step: print the file contents before replacing tokens
     - script: cat $(System.DefaultWorkingDirectory)/application-prod_scheduler.properties
