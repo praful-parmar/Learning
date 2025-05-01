@@ -11,7 +11,7 @@ pool:
 
 
 variables:
-  - group: MyVariableGroup   # Replace with your actual variable group name
+  - group: test   # Replace with your actual variable group name
 
 stages:
 - stage: ReplaceAndPublish
@@ -25,7 +25,7 @@ stages:
     - task: qetza.replacetokens.replacetokens-task.replacetokens@6
       displayName: 'Replace tokens in application-prod_scheduler.properties'
       inputs:
-        targetFiles: '$(System.DefaultWorkingDirectory)/$(mainRepoName)/src/main/resources/application-prod_scheduler.properties'
+        targetFiles: '$(System.DefaultWorkingDirectory)/$(mainRepoName)/resources/application-prod_scheduler.properties'
         tokenPrefix: '${'
         tokenSuffix: '}'
         actionOnMissing: 'warn'
