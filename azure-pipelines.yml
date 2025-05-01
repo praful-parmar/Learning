@@ -34,6 +34,6 @@ stages:
     - task: PublishBuildArtifacts@1
       displayName: 'Publish properties file as artifact'
       inputs:
-        PathtoPublish: '$(System.DefaultWorkingDirectory)/$(mainRepoName)/src/main/resources'
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/application-prod_scheduler.properties'
         ArtifactName: 'scheduler-config'
         publishLocation: 'Container'
