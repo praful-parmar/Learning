@@ -30,8 +30,8 @@ stages:
       displayName: 'Replace tokens in application-prod_scheduler.properties'
       inputs:
         targetFiles: '$(System.DefaultWorkingDirectory)/application-prod_scheduler.properties'
-        tokenPrefix: '${'
-        tokenSuffix: '}'
+        tokenPrefix: '__'
+        tokenSuffix: '__'
         actionOnMissing: 'warn'
         keepToken: false
 
