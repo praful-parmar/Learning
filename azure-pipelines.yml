@@ -30,11 +30,10 @@ stages:
       displayName: 'Replace tokens in application-prod_scheduler.properties'
       inputs:
         targetFiles: '$(System.DefaultWorkingDirectory)/application-prod_scheduler.properties'
-        tokenPrefix: '{'
+        tokenPrefix: '${'
         tokenSuffix: '}'
         actionOnMissing: 'warn'
         keepToken: false
-
 
     # Debug step: print the file contents after replacing tokens
     - script: cat $(System.DefaultWorkingDirectory)/application-prod_scheduler.properties
