@@ -16,33 +16,12 @@ stages:
       vmImage: 'ubuntu-latest'
 
     steps:
-
-    - script: |
-        echo "abc: $(key1)"
-        echo "bcd: $(key2)"
-      displayName: 'Print variable values'
-    # Debug step: print the file contents before replacing tokens
-    - script: cat $(System.DefaultWorkingDirectory)/application-prod_scheduler.properties
-      displayName: 'Print file contents before token replacement'
-
-    # Replace tokens
-    - task: qetza.replacetokens.replacetokens-task.replacetokens@6
-      displayName: 'Replace tokens in application-prod_scheduler.properties'
-      inputs:
-        rootDirectory: '$(System.DefaultWorkingDirectory)'
-        targetFiles: '**/application-prod_scheduler.properties'
-        tokenPrefix: '${'
-        tokenSuffix: '}'
-        actionOnMissing: 'warn'
-        keepToken: false
-        verbosity: 'detailed'
-      env:
-        key1: $(key1) # Map pipeline variables to environment variables
-        key2: $(key2)
-
-    # Debug step: print the file contents after replacing tokens
-    - script: cat $(System.DefaultWorkingDirectory)/application-prod_scheduler.properties
-      displayName: 'Print file contents after token replacement'
+    - bash: |
+        echo "##[group]Variables from test"
+        # Print all variables with the MYGROUP_ prefix
+        printenv | grep ^MYGROUP_ | sort
+        echo "##[endgroup]"
+      displayName: 'List variables from specific group'
 
     # Publish the modified file as an artifact
     - task: PublishBuildArtifacts@1
