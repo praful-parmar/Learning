@@ -17,16 +17,47 @@ stages:
 
     steps:
     - bash: |
-        echo "##[group]Variables from test"
-        # Print all variables with the MYGROUP_ prefix
-        printenv | grep ^MYGROUP_ | sort
+        #!/bin/bash
+        
+        # Output file location
+        OUTPUT_FILE="$(Build.ArtifactStagingDirectory)/variable_names.txt"
+        
+        # Common Azure DevOps system variable prefixes to exclude
+        SYSTEM_PREFIXES=(
+          "AGENT_" "BUILD_" "COMMON_" "PIPELINE_"
+          "SYSTEM_" "TF_" "ENDPOINT_" "INPUT_"
+          "SECRET_" "AZURE_"
+        )
+        
+        # Get all environment variables and process them
+        env | while IFS='=' read -r name _; do
+          # Skip if empty
+          [[ -z "$name" ]] && continue
+          
+          # Check against system prefixes
+          is_system_var=false
+          for prefix in "${SYSTEM_PREFIXES[@]}"; do
+            if [[ "$name" == "$prefix"* ]]; then
+              is_system_var=true
+              break
+            fi
+          done
+          
+          # If not a system variable, include it
+          if ! $is_system_var; then
+            echo "$name"
+          fi
+        done > "$OUTPUT_FILE"
+        
+        # Display results
+        echo "##[group]Extracted Variable Names"
+        cat "$OUTPUT_FILE"
         echo "##[endgroup]"
-      displayName: 'List variables from specific group'
+        
+        # Count variables found
+        VAR_COUNT=$(wc -l < "$OUTPUT_FILE")
+        echo "Found $VAR_COUNT variables in the group"
+      displayName: 'Extract variable names (Bash)'
 
-    # Publish the modified file as an artifact
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish properties file as artifact'
-      inputs:
-        PathtoPublish: '$(System.DefaultWorkingDirectory)/application-prod_scheduler.properties'
-        ArtifactName: 'scheduler-config'
-        publishLocation: 'Container'
+    - publish: $(Build.ArtifactStagingDirectory)/variable_names.txt
+      artifact: VariableNames
